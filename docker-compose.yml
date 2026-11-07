@@ -1,0 +1,77 @@
+services:
+  app1:
+    build: .
+    container_name: shopnow-server-1
+    environment:
+      PORT: 3000
+      INSTANCE_ID: server-1
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  app2:
+    build: .
+    container_name: shopnow-server-2
+    environment:
+      PORT: 3000
+      INSTANCE_ID: server-2
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  app3:
+    build: .
+    container_name: shopnow-server-3
+    environment:
+      PORT: 3000
+      INSTANCE_ID: server-3
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  load-balancer:
+    build: .
+    container_name: shopnow-load-balancer
+    command: ["node", "src/load-balancer.js"]
+    environment:
+      PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      app1:
+        condition: service_healthy
+      app2:
+        condition: service_healthy
+      app3:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:8080/__status').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 5s
+      timeout: 3s
+      retries: 5
