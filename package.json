@@ -1,0 +1,13 @@
+{
+  "name": "shopnow-load-balancer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Aplicacao demonstrativa com tres instancias e balanceador de carga em Node.js",
+  "scripts": {
+    "start:server": "node src/server.js",
+    "start:balancer": "node src/load-balancer.js"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
